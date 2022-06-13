@@ -29,7 +29,23 @@ import Starscream
 /// The class that handles the engine.io protocol and transports.
 /// See `SocketEnginePollable` and `SocketEngineWebsocket` for transport specific methods.
 open class SocketEngine:
-        NSObject, WebSocketDelegate, URLSessionDelegate, SocketEnginePollable, SocketEngineWebsocket, ConfigSettable {
+    NSObject, WebSocketDelegate, URLSessionDelegate, SocketEnginePollable, SocketEngineWebsocket, ConfigSettable {
+    public func websocketDidConnect(socket: WebSocketClient) {
+        
+    }
+    
+    public func websocketDidDisconnect(socket: WebSocketClient, error: Error?) {
+        
+    }
+    
+    public func websocketDidReceiveMessage(socket: WebSocketClient, text: String) {
+        
+    }
+    
+    public func websocketDidReceiveData(socket: WebSocketClient, data: Data) {
+        
+    }
+    
     // MARK: Properties
 
     private static let logType = "SocketEngine"
@@ -146,7 +162,6 @@ open class SocketEngine:
     private var pongsMissedMax = 0
     private var probeWait = ProbeWaitQueue()
     private var secure = false
-    private var certPinner: CertificatePinning?
     private var selfSigned = false
 
     // MARK: Initializers
@@ -307,7 +322,7 @@ open class SocketEngine:
             includingCookies: session?.configuration.httpCookieStorage?.cookies(for: urlPollingWithSid)
         )
 
-        ws = WebSocket(request: req, certPinner: certPinner, compressionHandler: compress ? WSCompression() : nil)
+        ws = WebSocket(request: req)
         ws?.callbackQueue = engineQueue
         ws?.delegate = self
 
@@ -618,8 +633,6 @@ open class SocketEngine:
                 self.secure = secure
             case let .selfSigned(selfSigned):
                 self.selfSigned = selfSigned
-            case let .security(pinner):
-                self.certPinner = pinner
             case .compress:
                 self.compress = true
             case .enableSOCKSProxy:
@@ -729,37 +742,5 @@ extension SocketEngine {
         DefaultSocketLogger.Logger.error("Engine URLSession became invalid", type: "SocketEngine")
 
         didError(reason: "Engine URLSession became invalid")
-    }
-}
-
-enum EngineError: Error {
-    case canceled
-}
-
-extension SocketEngine {
-    /// Delegate method for WebSocketDelegate.
-    ///
-    /// - Parameters:
-    ///   - event: WS Event
-    ///   - _:
-    public func didReceive(event: WebSocketEvent, client _: WebSocket) {
-        switch event {
-        case let .connected(headers):
-            wsConnected = true
-            client?.engineDidWebsocketUpgrade(headers: headers)
-            websocketDidConnect()
-        case .cancelled:
-            wsConnected = false
-            websocketDidDisconnect(error: EngineError.canceled)
-        case .disconnected(_, _):
-            wsConnected = false
-            websocketDidDisconnect(error: nil)
-        case let .text(msg):
-            parseEngineMessage(msg)
-        case let .binary(data):
-            parseEngineData(data)
-        case _:
-            break
-        }
     }
 }

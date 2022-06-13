@@ -281,23 +281,6 @@ open class SocketManager: NSObject, SocketManagerSpec, SocketParsable, SocketDat
         }
     }
 
-    /// Sends an event to the server on all namespaces in this manager.
-    ///
-    /// - parameter event: The event to send.
-    /// - parameter items: The data to send with this event.
-    open func emitAll(_ event: String, _ items: SocketData...) {
-        guard let emitData = try? items.map({ try $0.socketRepresentation() }) else {
-            DefaultSocketLogger.Logger.error("Error creating socketRepresentation for emit: \(event), \(items)",
-                                             type: SocketManager.logType)
-
-            return
-        }
-
-        forAll {socket in
-            socket.emit([event] + emitData)
-        }
-    }
-
     /// Called when the engine closes.
     ///
     /// - parameter reason: The reason that the engine closed.

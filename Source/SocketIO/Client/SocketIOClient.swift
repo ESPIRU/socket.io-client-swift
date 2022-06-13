@@ -285,7 +285,6 @@ open class SocketIOClient: NSObject, SocketIOClientSpec {
     /// - parameter event: The event to send.
     /// - parameter items: The items to send with this event. May be left out.
     /// - returns: An `OnAckCallback`. You must call the `timingOut(after:)` method before the event will be sent.
-    @objc
     open func emitWithAck(_ event: String, with items: [SocketData]) -> OnAckCallback {
         
         do {
@@ -422,7 +421,6 @@ open class SocketIOClient: NSObject, SocketIOClientSpec {
     /// If you wish to remove a client event handler, call the `off(id:)` with the UUID received from its `on` call.
     ///
     /// - parameter clientEvent: The event to remove handlers for.
-    @objc
     open func off(clientEvent event: SocketClientEvent) {
         off(event.rawValue)
     }
@@ -480,7 +478,6 @@ open class SocketIOClient: NSObject, SocketIOClientSpec {
     /// - parameter event: The event for this handler.
     /// - parameter callback: The callback that will execute when this event is received.
     /// - returns: A unique id for the handler that can be used to remove it.
-    @objc
     @discardableResult
     open func on(clientEvent event: SocketClientEvent, callback: @escaping NormalCallback) -> UUID {
         return on(event.rawValue, callback: callback)
@@ -491,7 +488,6 @@ open class SocketIOClient: NSObject, SocketIOClientSpec {
     /// - parameter clientEvent: The event for this handler.
     /// - parameter callback: The callback that will execute when this event is received.
     /// - returns: A unique id for the handler that can be used to remove it.
-    @objc
     @discardableResult
     open func once(clientEvent event: SocketClientEvent, callback: @escaping NormalCallback) -> UUID {
         return once(event.rawValue, callback: callback)

@@ -116,12 +116,6 @@ public protocol SocketManagerSpec : SocketEngineClient {
     /// - parameter nsp: The namespace to disconnect from.
     func disconnectSocket(forNamespace nsp: String)
 
-    /// Sends an event to the server on all namespaces in this manager.
-    ///
-    /// - parameter event: The event to send.
-    /// - parameter items: The data to send with this event.
-    func emitAll(_ event: String, _ items: SocketData...)
-
     /// Tries to reconnect to the server.
     ///
     /// This will cause a `disconnect` event to be emitted, as well as an `reconnectAttempt` event.
